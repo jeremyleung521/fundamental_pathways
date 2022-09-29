@@ -39,15 +39,15 @@ with open("./01_succ_list/output.pickle", "rb") as f:
         km = int(math.floor(lcsstr)/3)
         similarity = (2*km)/(int(len_seq1/3)+int(len_seq2/3))
         
-        similarities[idx,0] = seq1[0]
-        similarities[idx,1] = seq1[1]
-        similarities[idx,2] = seq2[0]
-        similarities[idx,3] = seq2[1]
+        similarities[idx,0] = seg1[-1][0]
+        similarities[idx,1] = seg1[-1][1]
+        similarities[idx,2] = seg2[-1][0]
+        similarities[idx,3] = seg2[-1][1]
         similarities[idx,4] = similarity
 
-#        with open('./update.txt', 'a') as fo:
-#            fo.write("similarity: "+" "+str(seg1[-1])+" "+str(seg2[-1])+" "+str(km)+" "+str(similarity))
-#            fo.write('\n')
+        with open('./update.txt', 'a') as fo:
+            fo.write("similarity: "+" "+str(seg1[-1])+" "+str(seg2[-1])+" "+str(km)+" "+str(similarity))
+            fo.write('\n')
 
 #        print(km, int(len_seq1/3), int(len_seq2/3))
 #        print("segments:",iter1, iter2)

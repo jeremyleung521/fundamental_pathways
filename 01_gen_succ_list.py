@@ -123,8 +123,6 @@ def retain_succ(
     trace_out_list = []
     frame_info_list = []
 
-    discards = numpy.loadtxt("discard_unique.txt").astype(np.int64) 
-
     # Yes, tracing backwards from the last iteration. This will (theoretically) allow us to catch duplicates more efficiently.
     with h5py.File(assign_name, "r") as assign_file:
         tqdm_iter = trange(last_iter, first_iter - 1, -1, desc="iter")
@@ -139,10 +137,6 @@ def retain_succ(
                             # Skip to next segment... It's already been captured
                             flag = True
                             print("overlap")
-                            break
-                        elif [n_iter, n_seg] in discards:
-                            flag = True
-                            print("discarded")
                             break
                     if flag is True:
                         continue
