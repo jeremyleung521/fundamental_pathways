@@ -40,7 +40,7 @@ def retain_succ(
     out_top="cat10_strip.prmtop",
     out_dir="succ_traj",
     hdf5=False,
-    rewrite_weights=False,
+    rewrite_weights=True,
 ):
     """
     Code that goes through an assign file (assign_name) and extracts iteration
@@ -123,7 +123,14 @@ def retain_succ(
     trace_out_list = []
     frame_info_list = []
 
-    to_remove = numpy.loadtxt("03_discard_pathways_uniq.txt").astype(int) 
+    sorted_paths = numpy.loadtxt("05_sorted_pathways.txt").astype(int) 
+    to_remove = sorted_paths[sorted_paths[:,6]!=4][:,0:2]
+    print(to_remove.shape)
+    to_remove_strings = numpy.zeros((len(to_remove)), dtype=int)
+    for idx, val in enumerate(to_remove):
+       remove_string =  str(val[0]).zfill(3)+str(val[1]).zfill(3)
+       to_remove_strings[idx] = int(remove_string)
+    print(to_remove_strings)
 
     # Yes, tracing backwards from the last iteration. This will (theoretically) allow us to catch duplicates more efficiently.
     with h5py.File(assign_name, "r") as assign_file:
@@ -141,12 +148,14 @@ def retain_succ(
                             print("overlap")
                             break
                         current_string = str(n_iter).zfill(3)+str(n_seg).zfill(3)
-                        if int(current_string) in to_remove:
+                        print(current_string, to_remove_strings[0])
+                        
+                        if int(current_string) in to_remove_strings:
                             flag = True
                             print(int(current_string), "discarded")
                             break
-                        else:
-                            print(int(current_string))
+                        #else:
+                        #    print(int(current_string))
                     if flag is True:
                         continue
                     else:
@@ -183,11 +192,12 @@ def retain_succ(
     # Finally, zero out (iter,seg) that do not fall in this "successful" list.
     if rewrite_weights:
         exclusive_set = {tuple(pair) for list in trace_out_list for pair in list}
-        with h5py.File(new_file, "r+") as h5file:
-            for n_iter in tqdm_iter:
-                for n_seg in range(assign_file["nsegs"][n_iter - 1]):
-                    if (n_iter, n_seg) not in exclusive_set:
-                        h5file[f"iterations/iter_{n_iter:>08}/seg_index"]["weight", n_seg] = 0
+        with h5py.File(assign_name,'r') as assign_file:
+            with h5py.File(new_file, "r+") as h5file:
+                for n_iter in tqdm_iter:
+                    for n_seg in range(assign_file["nsegs"][n_iter - 1]):
+                        if (n_iter, n_seg) not in exclusive_set:
+                            h5file[f"iterations/iter_{n_iter:>08}/seg_index"]["weight", n_seg] = 0
 
 
 def trace_seg_to_last_state(
@@ -319,11 +329,11 @@ if __name__ == "__main__":
         first_iter=1,
         last_iter=None,
         trace_basis=True,
-        out_traj=True,
+        out_traj=False,
         out_traj_ext=".nc",
         out_state_ext="_img.ncrst",
         out_top="cat10.prmtop",
         out_dir="succ_traj",
         hdf5=False,
-        rewrite_weights=False,
+        rewrite_weights=True,
    )

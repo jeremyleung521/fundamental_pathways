@@ -303,7 +303,7 @@ def trace_seg_to_last_state(
 
 if __name__ == "__main__":
     retain_succ(
-        west_name="../west.h5",
+        west_name="west.h5",
         assign_name="assign.h5",
         source_state_num=0,
         target_state_num=1,
