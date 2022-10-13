@@ -5,7 +5,7 @@ import time
 import pylcs
 import math
 
-with open("./01_succ_list/output.pickle", "rb") as f:
+with open("../output.pickle", "rb") as f:
     data = pickle.load(f)
     npathways = len(data)
     lpathways = len(data[0])
@@ -14,7 +14,7 @@ with open("./01_succ_list/output.pickle", "rb") as f:
         for idx2, val2 in enumerate(val):
             pathways[idx,idx2] = val2
 
-    print(pathways.shape)
+    #print(pathways.shape)
 
     perm = combinations(pathways,2)
     a = np.array(list(perm), dtype=np.int64)
@@ -54,4 +54,4 @@ with open("./01_succ_list/output.pickle", "rb") as f:
 #        print("similarity =",similarity)
 #        print("--- %s seconds ---" % (time.time() - start_time))
 
-    np.savetxt("02_similarities.txt", similarities)
+    np.savetxt("output/02_similarities.txt", similarities)
